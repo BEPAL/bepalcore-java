@@ -18,7 +18,7 @@ public class AccountCreateOperation extends BaseOperation {
 
     public UserAccount referrer;
 
-    private short referrerPercent = 0;
+    private short referrerPercent = 1000;
 
     public String name;
 
