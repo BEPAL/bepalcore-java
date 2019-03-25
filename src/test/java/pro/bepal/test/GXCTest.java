@@ -25,7 +25,14 @@ public class GXCTest {
     @BeforeClass
     public static void testStart() {
         ecKey = GXCECKey.fromPrivateKey("5K1yv2ghXNEGPzuSRYxY4hTYsjoftSSFSKgbaqwZ68RvnyoBgYK");
+
+        // TestNet Chain Id
         chainID = Hex.decode("c2af30ef9340ff81fd61654295e98a1ff04b23189748f86727d0b26b40bb0ff4");
+        // MainNet Chain Id
+        //chainID = Hex.decode("4f7d07969c446f8342033acb3ab2ae5044cbe0fde93db02de75bd17fa8fd84b8");
+        // Get chain id rpc interface;
+        // curl --data '{"jsonrpc": "2.0","method": "call","params": [0, "get_chain_id", []],"id": 1}' https://node1.gxb.io/rpc
+        // docs url : https://docs.gxchain.org/zh/guide/apis.html#get-chain-id
     }
 
     @Test
@@ -99,6 +106,7 @@ public class GXCTest {
 
         try {
             System.out.println(tx.toJson().toString(4));
+
         } catch (Exception ex) {
             fail();
         }
