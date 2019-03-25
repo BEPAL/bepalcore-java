@@ -10,6 +10,7 @@ import pro.bepal.coin.gxc.UserAccount;
 import pro.bepal.coin.gxc.operation.*;
 import pro.bepal.core.ECSign;
 import pro.bepal.core.gxc.GXCECKey;
+import pro.bepal.util.ByteUtil;
 import pro.bepal.util.TimeUtil;
 
 import java.security.SecureRandom;
@@ -37,8 +38,12 @@ public class GXCTest {
 
     @Test
     public void testTx() {
-        int block_num = 0;
-        int ref_block_prefix = 0;
+        // blockId = head_block_id
+        // curl -X POST  https://node1.gxb.io/rpc -d '{"jsonrpc": "2.0","method": "call","params": [0, "get_dynamic_global_properties", []],"id": 1}'
+        // docs url: https://docs.gxchain.org/zh/guide/apis.html#get-dynamic-global-properties
+        String blockId = "0117fc711ba70bbcf1d8a77e60761a458a2205c6";
+        int block_num = ByteUtil.bytesToShortLE(Hex.decode(blockId.substring(4, 8)), 0);
+        long ref_block_prefix = ByteUtil.bytesToIntByLong(Hex.decode(blockId.substring(8, 16)), 0);
 
         Transaction tx = new Transaction();
         tx.chainID = chainID;
@@ -52,11 +57,13 @@ public class GXCTest {
 
         TxOperation txop = new TxOperation();
         txop.amount = new AssetAmount(10000, runasset);
+        // 手续费可通过rpc接口获取;
+        // 文档链接：https://docs.gxchain.org/zh/guide/apis.html#get-required-fees
         txop.fee = new AssetAmount(2000, runasset);
         txop.from = new UserAccount(sendfrom);
         txop.to = new UserAccount(sendto);
 
-        GXCECKey key1 = GXCECKey.fromPublicKey("GXC6m2KavJGPwxRTrqZTXd8ZspVEajoy8CDLWe5qEhJsbKPoLkxiT");
+        GXCECKey key1 = GXCECKey.fromPublicKey("GXC7wLzcYtJWVGLUamgzdhoAaRsQYNf9yN2JVKqNM4VHjBnfWgoS9");
         SecureRandom random = new SecureRandom();
         txop.memo = new Memo(ecKey, key1, random.generateSeed(8));
         txop.memo.encryptMessage(ecKey, "123456".getBytes());
@@ -76,8 +83,12 @@ public class GXCTest {
 
     @Test
     public void testRegAccount() {
-        int block_num = 0;
-        int ref_block_prefix = 0;
+        // blockId = head_block_id
+        // curl -X POST  https://node1.gxb.io/rpc -d '{"jsonrpc": "2.0","method": "call","params": [0, "get_dynamic_global_properties", []],"id": 1}'
+        // docs url: https://docs.gxchain.org/zh/guide/apis.html#get-dynamic-global-properties
+        String blockId = "0117fc711ba70bbcf1d8a77e60761a458a2205c6";
+        int block_num = ByteUtil.bytesToShortLE(Hex.decode(blockId.substring(4, 8)), 0);
+        long ref_block_prefix = ByteUtil.bytesToIntByLong(Hex.decode(blockId.substring(8, 16)), 0);
 
         Transaction tx = new Transaction();
         tx.chainID = chainID;
@@ -86,13 +97,15 @@ public class GXCTest {
         tx.expiration = System.currentTimeMillis() / 1000 + 60 * 10;
 
         //注册人必须是终身会员
-        String registrar = "1.2.1207";
-        String regname = "bepal123456789";
+        String registrar = "1.2.955603";
+        String regname = "bepal-test";
         String runasset = "1.3.1";
 
-        GXCECKey regkey = GXCECKey.fromPrivateKey(SHAHash.sha2256("bepal123456789".getBytes()));
+        GXCECKey regkey = GXCECKey.fromPublicKey("GXC7wLzcYtJWVGLUamgzdhoAaRsQYNf9yN2JVKqNM4VHjBnfWgoS9");
 
         AccountCreateOperation operation = new AccountCreateOperation();
+        // 手续费可通过rpc接口获取;
+        // 文档链接：https://docs.gxchain.org/zh/guide/apis.html#get-required-fees
         operation.fee = new AssetAmount(1000, runasset);
         operation.registrar = new UserAccount(registrar);
         operation.referrer = new UserAccount(registrar);
@@ -116,10 +129,14 @@ public class GXCTest {
 
     @Test
     public void testUpdateAccount() {
-        //更改账户中含投票
-        int block_num = 0;
-        int ref_block_prefix = 0;
+        // blockId = head_block_id
+        // curl -X POST  https://node1.gxb.io/rpc -d '{"jsonrpc": "2.0","method": "call","params": [0, "get_dynamic_global_properties", []],"id": 1}'
+        // docs url: https://docs.gxchain.org/zh/guide/apis.html#get-dynamic-global-properties
+        String blockId = "0117fc711ba70bbcf1d8a77e60761a458a2205c6";
+        int block_num = ByteUtil.bytesToShortLE(Hex.decode(blockId.substring(4, 8)), 0);
+        long ref_block_prefix = ByteUtil.bytesToIntByLong(Hex.decode(blockId.substring(8, 16)), 0);
 
+        //更改账户中含投票
         Transaction tx = new Transaction();
         tx.chainID = chainID;
         tx.blockNum = block_num;
@@ -129,9 +146,11 @@ public class GXCTest {
         String runuser = "1.2.1207";
         String runasset = "1.3.1";
 
-        GXCECKey updatekey = GXCECKey.fromPrivateKey(SHAHash.sha2256("bepal123456789".getBytes()));
+        GXCECKey updatekey = GXCECKey.fromPublicKey("GXC7wLzcYtJWVGLUamgzdhoAaRsQYNf9yN2JVKqNM4VHjBnfWgoS9");
 
         AccountUpdateOperation operation1 = new AccountUpdateOperation();
+        // 手续费可通过rpc接口获取;
+        // 文档链接：https://docs.gxchain.org/zh/guide/apis.html#get-required-fees
         operation1.fee = new AssetAmount(100, runasset);
         operation1.account = new UserAccount(runuser);
         Authority authority1 = new Authority();
@@ -153,8 +172,12 @@ public class GXCTest {
 
     @Test
     public void testToLifeTimeMember() {
-        int block_num = 0;
-        int ref_block_prefix = 0;
+        // blockId = head_block_id
+        // curl -X POST  https://node1.gxb.io/rpc -d '{"jsonrpc": "2.0","method": "call","params": [0, "get_dynamic_global_properties", []],"id": 1}'
+        // docs url: https://docs.gxchain.org/zh/guide/apis.html#get-dynamic-global-properties
+        String blockId = "0117fc711ba70bbcf1d8a77e60761a458a2205c6";
+        int block_num = ByteUtil.bytesToShortLE(Hex.decode(blockId.substring(4, 8)), 0);
+        long ref_block_prefix = ByteUtil.bytesToIntByLong(Hex.decode(blockId.substring(8, 16)), 0);
 
         Transaction tx = new Transaction();
         tx.chainID = chainID;
@@ -184,8 +207,12 @@ public class GXCTest {
 
     @Test
     public void testProposalCreate() {
-        int block_num = 0;
-        int ref_block_prefix = 0;
+        // blockId = head_block_id
+        // curl -X POST  https://node1.gxb.io/rpc -d '{"jsonrpc": "2.0","method": "call","params": [0, "get_dynamic_global_properties", []],"id": 1}'
+        // docs url: https://docs.gxchain.org/zh/guide/apis.html#get-dynamic-global-properties
+        String blockId = "0117fc711ba70bbcf1d8a77e60761a458a2205c6";
+        int block_num = ByteUtil.bytesToShortLE(Hex.decode(blockId.substring(4, 8)), 0);
+        long ref_block_prefix = ByteUtil.bytesToIntByLong(Hex.decode(blockId.substring(8, 16)), 0);
 
         Transaction tx = new Transaction();
         tx.chainID = chainID;
@@ -197,6 +224,8 @@ public class GXCTest {
         String runasset = "1.3.1";
 
         ProposalCreateOperation operation = new ProposalCreateOperation();
+        // 手续费可通过rpc接口获取;
+        // 文档链接：https://docs.gxchain.org/zh/guide/apis.html#get-required-fees
         operation.fee = new AssetAmount(100, runasset);
         operation.feePayingAccount = new UserAccount(proposalcreate);
         operation.expirationTime = TimeUtil.utcToTimeStamp("2019-01-12T12:50:52");
