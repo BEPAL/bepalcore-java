@@ -1,5 +1,5 @@
-package pro.bepal.test;/*
- * Copyright (c) 2018, Bepal
+/*
+ * Copyright (c) 2018-2019, BEPAL
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -24,6 +24,7 @@ package pro.bepal.test;/*
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package pro.bepal.test;
 
 import com.google.common.collect.Lists;
 import org.junit.BeforeClass;
