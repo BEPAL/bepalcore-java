@@ -73,6 +73,7 @@ public class GXCTest {
         tx.sign(ecKey);
 
         try {
+            // 广播一笔交易：https://docs.gxchain.org/zh/guide/apis.html#broadcast-transaction
             System.out.println(tx.toJson().toString(4));
         } catch (Exception ex) {
             fail();
@@ -119,7 +120,6 @@ public class GXCTest {
 
         try {
             System.out.println(tx.toJson().toString(4));
-
         } catch (Exception ex) {
             fail();
         }
