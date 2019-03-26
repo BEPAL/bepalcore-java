@@ -26,10 +26,12 @@
  */
 package pro.bepal.test;
 
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
-import pro.bepal.categories.SHAHash;
 import pro.bepal.coin.gxc.AssetAmount;
 import pro.bepal.coin.gxc.Transaction;
 import pro.bepal.coin.gxc.UserAccount;
@@ -54,9 +56,12 @@ public class GXCTest {
         ecKey = GXCECKey.fromPrivateKey("5K1yv2ghXNEGPzuSRYxY4hTYsjoftSSFSKgbaqwZ68RvnyoBgYK");
 
         // TestNet Chain Id
+        // https://testnet.gxchain.org/rpc
         chainID = Hex.decode("c2af30ef9340ff81fd61654295e98a1ff04b23189748f86727d0b26b40bb0ff4");
         // MainNet Chain Id
-        //chainID = Hex.decode("4f7d07969c446f8342033acb3ab2ae5044cbe0fde93db02de75bd17fa8fd84b8");
+        // https://node1.gxb.io/rpc
+//        chainID = Hex.decode("4f7d07969c446f8342033acb3ab2ae5044cbe0fde93db02de75bd17fa8fd84b8");
+
         // Get chain id rpc interface;
         // curl --data '{"jsonrpc": "2.0","method": "call","params": [0, "get_chain_id", []],"id": 1}' https://node1.gxb.io/rpc
         // docs url : https://docs.gxchain.org/zh/guide/apis.html#get-chain-id
@@ -100,7 +105,7 @@ public class GXCTest {
 
         try {
             // 广播一笔交易：https://docs.gxchain.org/zh/guide/apis.html#broadcast-transaction
-            System.out.println(tx.toJson().toString(4));
+            System.out.println(buildBroadcastJsonBody(tx));
         } catch (Exception ex) {
             fail();
         }
@@ -145,7 +150,7 @@ public class GXCTest {
         tx.sign(ecKey);
 
         try {
-            System.out.println(tx.toJson().toString(4));
+            System.out.println(buildBroadcastJsonBody(tx));
         } catch (Exception ex) {
             fail();
         }
@@ -188,7 +193,7 @@ public class GXCTest {
         tx.sign(ecKey);
 
         try {
-            System.out.println(tx.toJson().toString(4));
+            System.out.println(buildBroadcastJsonBody(tx));
         } catch (Exception ex) {
             fail();
         }
@@ -223,7 +228,7 @@ public class GXCTest {
         tx.sign(ecKey);
 
         try {
-            System.out.println(tx.toJson().toString(4));
+            System.out.println(buildBroadcastJsonBody(tx));
         } catch (Exception ex) {
             fail();
         }
@@ -268,11 +273,35 @@ public class GXCTest {
         tx.sign(ecKey);
 
         try {
-            System.out.println(tx.toJson().toString(4));
+            System.out.println(buildBroadcastJsonBody(tx));
         } catch (Exception ex) {
             fail();
         }
 
         assertTrue(ecKey.verify(tx.getSignHash(), ECSign.fromData(tx.signature.get(0))));
+    }
+
+
+    // 广播一笔交易：https://docs.gxchain.org/zh/guide/apis.html#broadcast-transaction
+    private String buildBroadcastJsonBody(Transaction tx) throws JSONException {
+        return buildBroadcastJsonBody(tx.toJson());
+    }
+    private String buildBroadcastJsonBody(JSONObject tx) throws JSONException {
+        JSONArray params = new JSONArray();
+        {
+            params.put(2);
+            params.put("broadcast_transaction");
+            params.put(new JSONArray().put(tx));
+        }
+
+        // build json body
+        JSONObject json = new JSONObject();
+        json.put("jsonrpc","2.0");
+        json.put("method","call");
+        json.put("params",params);
+        json.put("id",1);
+        // 官方接口：curl  https://node1.gxb.io/rpc -d 'jsonbody'
+        // 官方广播接口文档: https://docs.gxchain.org/zh/guide/apis.html#broadcast-transaction
+        return json.toString(4);
     }
 }
