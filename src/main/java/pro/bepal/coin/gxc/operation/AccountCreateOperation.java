@@ -44,7 +44,9 @@ public class AccountCreateOperation extends BaseOperation {
 
     public UserAccount referrer;
 
-    private short referrerPercent = 1000;
+    // 最大推荐返佣值
+    // https://block.gxb.io/#/transaction/ae516aa364c0c790b58e2bcdb8a370ebc25bb882
+    private short referrerPercent = 10000;
 
     public String name;
 
