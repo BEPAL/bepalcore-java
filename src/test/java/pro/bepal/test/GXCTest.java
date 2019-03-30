@@ -90,7 +90,7 @@ public class GXCTest {
         txop.amount = new AssetAmount(10000, runasset);
         // 手续费可通过rpc接口获取;
         // 文档链接：https://docs.gxchain.org/zh/guide/apis.html#get-required-fees
-        txop.fee = new AssetAmount(2000, runasset);
+        txop.fee = new AssetAmount(1000, runasset);
         txop.from = new UserAccount(sendfrom);
         txop.to = new UserAccount(sendto);
 
